@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture - terraform-azure-sentinel-ai</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0b0c0b;color:#f5f2eb;font-family:'Courier New',monospace;line-height:1.7}
+a{color:#c8420a;text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:1200px;margin:0 auto;padding:2rem}
+.badge{display:inline-block;background:#0078D4;color:#fff;padding:0.3rem 1rem;border-radius:4px;font-size:0.85rem;margin-bottom:1.5rem}
+h1{font-size:2.2rem;color:#c8420a;border-bottom:2px solid #c8420a;padding-bottom:0.5rem;margin-bottom:1.5rem}
+h2{font-size:1.5rem;color:#c8420a;margin:2rem 0 1rem;border-left:4px solid #c8420a;padding-left:0.75rem}
+h3{font-size:1.1rem;color:#f5f2eb;margin:1.2rem 0 0.5rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1rem 0}
+.card{background:#161816;border:1px solid #2a2d2a;border-radius:8px;padding:1.2rem;transition:border-color 0.2s}.card:hover{border-color:#c8420a}
+.card .num{font-size:2rem;color:#c8420a;font-weight:bold}
+.card .label{color:#a0a0a0;font-size:0.85rem}
+.card .value{color:#f5f2eb;font-size:1rem;margin-top:0.25rem}
+.arch-diagram{background:#161816;border:1px solid #2a2d2a;border-radius:8px;padding:2rem;margin:1rem 0;overflow-x:auto}
+.flow-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0.5rem;margin:0.75rem 0}
+.flow-box{background:#1e201e;border:2px solid #c8420a;border-radius:6px;padding:0.6rem 1.2rem;text-align:center;min-width:140px;font-size:0.85rem}
+.flow-box.accent{background:#c8420a;color:#fff;border-color:#c8420a}
+.flow-box.blue{border-color:#0078D4;background:#0a1628}
+.flow-box.green{border-color:#27AE60;background:#0a1e12}
+.flow-box.yellow{border-color:#F39C12;background:#1e1a0a}
+.flow-arrow{color:#c8420a;font-size:1.5rem}
+.flow-arrow-down{text-align:center;color:#c8420a;font-size:1.5rem;margin:0.25rem 0}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.85rem}
+th{background:#1a1c1a;color:#c8420a;text-align:left;padding:0.6rem;border:1px solid #2a2d2a}
+td{padding:0.6rem;border:1px solid #2a2d2a;color:#f5f2eb}
+tr:nth-child(even){background:#131513}
+code{background:#1a1c1a;padding:0.15rem 0.4rem;border-radius:3px;font-size:0.85rem;color:#c8420a}
+pre{background:#1a1c1a;padding:1rem;border-radius:6px;overflow-x:auto;margin:0.5rem 0;font-size:0.82rem;color:#f5f2eb;border:1px solid #2a2d2a}
+.checklist{list-style:none;padding:0}.checklist li{padding:0.4rem 0;border-bottom:1px solid #1a1c1a}
+.checklist li::before{content:"[ ] ";color:#c8420a;font-weight:bold}
+.section{margin-bottom:2.5rem}
+.tag{display:inline-block;background:#1a1c1a;border:1px solid #c8420a;color:#c8420a;padding:0.15rem 0.5rem;border-radius:3px;font-size:0.75rem;margin:0.15rem}
+footer{border-top:1px solid #2a2d2a;padding-top:1.5rem;margin-top:3rem;color:#666;font-size:0.8rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="container">
+
+<span class="badge">Microsoft Azure</span>
+<h1>terraform-azure-sentinel-ai</h1>
+
+<div class="section">
+<h2>Executive Summary</h2>
+<p>This Terraform module deploys Microsoft Sentinel (Azure Sentinel) with AI-powered SOC automation capabilities. It provisions a Log Analytics workspace, onboards Sentinel, configures data connectors (Azure AD, Security Center, Defender ATP), deploys scheduled analytics rules for threat detection, sets up automation rules for incident response, creates SOAR playbooks via Logic Apps with AI-powered triage endpoints, and manages threat intelligence through watchlists and TI indicators. The module enables a fully automated Security Operations Center with machine-learning-driven incident classification and response.</p>
+</div>
+
+<div class="section">
+<h2>Overview</h2>
+<div class="card-grid">
+<div class="card"><div class="num">6</div><div class="label">Resource Types</div><div class="value">LAW, Sentinel, Connectors, Rules, Playbooks, TI</div></div>
+<div class="card"><div class="num">3</div><div class="label">Data Connectors</div><div class="value">AAD, ASC, MDATP</div></div>
+<div class="card"><div class="num">3</div><div class="label">Default Analytics Rules</div><div class="value">Brute-force, Impossible Travel, Suspicious PowerShell</div></div>
+<div class="card"><div class="num">14</div><div class="label">Input Variables</div><div class="value">Configurable module parameters</div></div>
+<div class="card"><div class="num">7</div><div class="label">Outputs</div><div class="value">IDs and maps for all resources</div></div>
+<div class="card"><div class="num">AI</div><div class="label">SOAR Integration</div><div class="value">Logic Apps with AI triage endpoints</div></div>
+</div>
+</div>
+
+<div class="section">
+<h2>Architecture Diagram</h2>
+<div class="arch-diagram">
+<div class="flow-arrow-down">DATA SOURCES</div>
+<div class="flow-row">
+<div class="flow-box blue">Azure Active Directory</div>
+<div class="flow-box blue">Azure Security Center</div>
+<div class="flow-box blue">Microsoft Defender ATP</div>
+</div>
+<div class="flow-arrow-down">&#9660;</div>
+<div class="flow-row">
+<div class="flow-box accent">Log Analytics Workspace</div>
+</div>
+<div class="flow-arrow-down">&#9660;</div>
+<div class="flow-row">
+<div class="flow-box accent">Sentinel Onboarding</div>
+</div>
+<div class="flow-arrow-down">&#9660;</div>
+<div class="flow-row">
+<div class="flow-box">Scheduled Analytics Rules</div>
+<div class="flow-arrow">&#9654;</div>
+<div class="flow-box">MS Security Incident Rule</div>
+</div>
+<div class="flow-arrow-down">&#9660;</div>
+<div class="flow-row">
+<div class="flow-box green">Automation Rules</div>
+</div>
+<div class="flow-arrow-down">&#9660;</div>
+<div class="flow-row">
+<div class="flow-box green">SOAR Playbooks (Logic Apps)</div>
+<div class="flow-arrow">&#9654;</div>
+<div class="flow-box green">AI Triage Endpoint</div>
+</div>
+<div class="flow-arrow-down">&#9660;</div>
+<div class="flow-row">
+<div class="flow-box yellow">Watchlists</div>
+<div class="flow-box yellow">Threat Intelligence Indicators</div>
+</div>
+</div>
+</div>
+
+<div class="section">
+<h2>Component Breakdown</h2>
+<h3>Log Analytics Workspace</h3>
+<p>Core data store with configurable SKU (<code>PerGB2018</code>, <code>Free</code>, <code>Standalone</code>, <code>PerNode</code>) and retention (30-730 days). Serves as the foundation for all Sentinel operations.</p>
+<h3>Data Connectors</h3>
+<p>Three toggleable connectors ingest security telemetry: Azure AD (sign-in/audit logs), Azure Security Center (security alerts), and Microsoft Defender ATP (endpoint detection).</p>
+<h3>Scheduled Analytics Rules</h3>
+<p>Custom KQL-based detection rules with configurable severity, frequency, and lookback. Default rules detect brute-force logins, impossible travel, and suspicious PowerShell execution. Rules auto-create incidents with entity-based grouping.</p>
+<h3>Automation Rules</h3>
+<p>Condition-based rules that automatically modify incident properties (e.g., escalate severity). Triggered by incident severity matching.</p>
+<h3>SOAR Playbooks (Logic Apps)</h3>
+<p>HTTP-triggered Logic App workflows that respond to Sentinel incidents. Each playbook can optionally invoke an AI endpoint for automated incident triage and classification.</p>
+<h3>Threat Intelligence</h3>
+<p>Watchlists store AI-curated threat indicators (IPs, domains) with confidence scores. TI Indicators are created for IP and domain types with STIX pattern matching.</p>
+</div>
+
+<div class="section">
+<h2>Data Flow</h2>
+<ol style="padding-left:1.5rem">
+<li>Security telemetry flows from Azure AD, ASC, and MDATP into the Log Analytics Workspace via data connectors</li>
+<li>Sentinel onboarding enables SIEM capabilities on the workspace</li>
+<li>Scheduled analytics rules query ingested data at configurable intervals (e.g., PT1H, PT5M)</li>
+<li>Matching queries generate incidents with severity classification</li>
+<li>MS Security Incident rules create incidents from Microsoft security product alerts</li>
+<li>Automation rules evaluate incidents and modify properties or trigger playbooks</li>
+<li>SOAR playbooks receive incident data via HTTP trigger</li>
+<li>AI triage action sends incident context to an AI/ML endpoint for classification</li>
+<li>Watchlists and TI indicators enrich investigation with known threat data</li>
+</ol>
+</div>
+
+<div class="section">
+<h2>Security Controls</h2>
+<table>
+<tr><th>Control</th><th>Implementation</th></tr>
+<tr><td>Data Retention</td><td>Configurable 30-730 days on Log Analytics Workspace</td></tr>
+<tr><td>Threat Detection</td><td>KQL-based analytics rules with configurable severity and frequency</td></tr>
+<tr><td>Automated Response</td><td>Automation rules + SOAR playbooks for incident handling</td></tr>
+<tr><td>AI-Powered Triage</td><td>Logic App HTTP action to AI endpoint for incident classification</td></tr>
+<tr><td>Threat Intelligence</td><td>Watchlists with confidence scoring and TI indicators (STIX patterns)</td></tr>
+<tr><td>Incident Grouping</td><td>Entity-based grouping with 5-hour lookback to reduce alert fatigue</td></tr>
+<tr><td>Multi-Source Ingestion</td><td>AAD, ASC, and MDATP connectors for comprehensive visibility</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Industry Adaptation</h2>
+<div class="card-grid">
+<div class="card"><h3>Financial Services</h3><p>Configure brute-force detection thresholds, enable all connectors, set 365-day retention for compliance, add custom KQL rules for transaction anomalies.</p></div>
+<div class="card"><h3>Healthcare</h3><p>Enable HIPAA-aligned retention (180+ days), add watchlist entries for known healthcare threat actors, configure AI triage for PHI-related incidents.</p></div>
+<div class="card"><h3>Government</h3><p>Set 730-day retention for FedRAMP, enable all data connectors, deploy multiple playbooks for tiered incident response workflows.</p></div>
+<div class="card"><h3>E-Commerce</h3><p>Focus on impossible travel and credential stuffing rules, integrate AI triage with fraud detection endpoints, monitor for account takeover patterns.</p></div>
+</div>
+</div>
+
+<div class="section">
+<h2>Production Readiness Checklist</h2>
+<ul class="checklist">
+<li>Configure appropriate retention period (90+ days recommended)</li>
+<li>Enable all relevant data connectors for comprehensive coverage</li>
+<li>Review and customize default analytics rules for your environment</li>
+<li>Configure AI endpoint URL with proper authentication</li>
+<li>Set up automation rules for high-severity incident escalation</li>
+<li>Populate watchlists with organization-specific threat intelligence</li>
+<li>Test playbook triggers with sample incidents</li>
+<li>Configure RBAC: Sentinel Contributor, Logic App Contributor</li>
+<li>Set up monitoring for playbook execution failures</li>
+<li>Enable resource tagging for cost tracking and governance</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>Configuration Reference</h2>
+<h3>Required Variables</h3>
+<table>
+<tr><th>Variable</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>name_prefix</code></td><td>string</td><td>Prefix for all resource names (3-24 chars, alphanumeric + hyphens)</td></tr>
+<tr><td><code>location</code></td><td>string</td><td>Azure region for all resources</td></tr>
+<tr><td><code>resource_group_name</code></td><td>string</td><td>Target resource group name</td></tr>
+</table>
+<h3>Optional Variables</h3>
+<table>
+<tr><th>Variable</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>log_analytics_sku</code></td><td>string</td><td>PerGB2018</td><td>LAW SKU</td></tr>
+<tr><td><code>retention_in_days</code></td><td>number</td><td>90</td><td>Data retention (30-730)</td></tr>
+<tr><td><code>enable_aad_connector</code></td><td>bool</td><td>true</td><td>Azure AD connector</td></tr>
+<tr><td><code>enable_asc_connector</code></td><td>bool</td><td>true</td><td>Security Center connector</td></tr>
+<tr><td><code>enable_mdatp_connector</code></td><td>bool</td><td>false</td><td>Defender ATP connector</td></tr>
+<tr><td><code>analytics_rules</code></td><td>list(object)</td><td>3 default rules</td><td>Scheduled analytics rules</td></tr>
+<tr><td><code>automation_rules</code></td><td>list(object)</td><td>1 default rule</td><td>Automation rules</td></tr>
+<tr><td><code>enable_playbooks</code></td><td>bool</td><td>true</td><td>Enable SOAR playbooks</td></tr>
+<tr><td><code>playbook_configs</code></td><td>list(object)</td><td>1 AI triage playbook</td><td>Playbook configurations</td></tr>
+<tr><td><code>watchlist_items</code></td><td>list(object)</td><td>[]</td><td>Threat intel watchlist items</td></tr>
+<tr><td><code>tags</code></td><td>map(string)</td><td>{}</td><td>Resource tags</td></tr>
+</table>
+<h3>Outputs</h3>
+<table>
+<tr><th>Output</th><th>Description</th></tr>
+<tr><td><code>workspace_id</code></td><td>Log Analytics workspace ID</td></tr>
+<tr><td><code>workspace_name</code></td><td>Log Analytics workspace name</td></tr>
+<tr><td><code>sentinel_id</code></td><td>Sentinel onboarding resource ID</td></tr>
+<tr><td><code>analytics_rule_ids</code></td><td>Map of analytics rule names to IDs</td></tr>
+<tr><td><code>automation_rule_ids</code></td><td>Map of automation rule names to IDs</td></tr>
+<tr><td><code>playbook_ids</code></td><td>Map of playbook names to Logic App IDs</td></tr>
+<tr><td><code>data_connector_ids</code></td><td>Map of enabled data connector IDs</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Deployment</h2>
+<pre>
+# Initialize Terraform
+terraform init
+
+# Preview changes
+terraform plan -out=tfplan
+
+# Apply configuration
+terraform apply tfplan
+
+# Verify in Azure Portal
+# Navigate to Microsoft Sentinel to confirm data connectors, rules, and playbooks
+</pre>
+<h3>Prerequisites</h3>
+<ul style="padding-left:1.5rem;margin-top:0.5rem">
+<li>Terraform >= 1.5.0</li>
+<li>AzureRM provider >= 3.80.0</li>
+<li>Existing Azure Resource Group</li>
+<li>RBAC: Microsoft Sentinel Contributor, Logic App Contributor</li>
+<li>For AI triage: accessible AI/ML endpoint (e.g., Azure OpenAI)</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>Links</h2>
+<ul style="padding-left:1.5rem">
+<li><a href="https://learn.microsoft.com/en-us/azure/sentinel/overview">Microsoft Sentinel Overview</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/sentinel/automate-responses-with-playbooks">Automate Responses with Playbooks</a></li>
+<li><a href="https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/sentinel_log_analytics_workspace_onboarding">Terraform Sentinel Resource Docs</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/sentinel/detect-threats-built-in">Sentinel Analytics Rules</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/sentinel/automate-incident-handling-with-automation-rules">Sentinel Automation Rules</a></li>
+</ul>
+</div>
+
+<footer>
+<p>terraform-azure-sentinel-ai &middot; Architecture Documentation &middot; Generated 2026-03-15</p>
+<p>Terraform Module for Microsoft Azure</p>
+</footer>
+
+</div>
+</body>
+</html>
