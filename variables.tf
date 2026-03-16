@@ -1,9 +1,5 @@
-###############################################################################
-# General Variables
-###############################################################################
-
 variable "name_prefix" {
-  description = "Prefix for all resource names"
+  description = "Prefix for all resource names."
   type        = string
 
   validation {
@@ -13,17 +9,17 @@ variable "name_prefix" {
 }
 
 variable "location" {
-  description = "Azure region for all resources"
+  description = "Azure region for all resources."
   type        = string
 }
 
 variable "resource_group_name" {
-  description = "Name of the resource group where resources will be created"
+  description = "Name of the resource group."
   type        = string
 }
 
 variable "log_analytics_sku" {
-  description = "SKU for the Log Analytics workspace"
+  description = "SKU for the Log Analytics workspace."
   type        = string
   default     = "PerGB2018"
 
@@ -34,7 +30,7 @@ variable "log_analytics_sku" {
 }
 
 variable "retention_in_days" {
-  description = "Data retention period in days for the Log Analytics workspace"
+  description = "Data retention period in days for the Log Analytics workspace."
   type        = number
   default     = 90
 
@@ -44,34 +40,26 @@ variable "retention_in_days" {
   }
 }
 
-###############################################################################
-# Data Connector Variables
-###############################################################################
-
 variable "enable_aad_connector" {
-  description = "Enable Azure Active Directory data connector"
+  description = "Enable Azure Active Directory data connector."
   type        = bool
   default     = true
 }
 
 variable "enable_asc_connector" {
-  description = "Enable Azure Security Center data connector"
+  description = "Enable Azure Security Center data connector."
   type        = bool
   default     = true
 }
 
 variable "enable_mdatp_connector" {
-  description = "Enable Microsoft Defender Advanced Threat Protection data connector"
+  description = "Enable Microsoft Defender ATP data connector."
   type        = bool
   default     = false
 }
 
-###############################################################################
-# Analytics Rules
-###############################################################################
-
 variable "analytics_rules" {
-  description = "List of scheduled analytics rules for threat detection"
+  description = "List of scheduled analytics rules for threat detection."
   type = list(object({
     name      = string
     severity  = string
@@ -126,12 +114,8 @@ variable "analytics_rules" {
   }
 }
 
-###############################################################################
-# Automation Rules
-###############################################################################
-
 variable "automation_rules" {
-  description = "List of automation rules for automated incident response"
+  description = "List of automation rules for automated incident response."
   type = list(object({
     name                 = string
     order                = number
@@ -148,18 +132,14 @@ variable "automation_rules" {
   ]
 }
 
-###############################################################################
-# Playbook Variables
-###############################################################################
-
 variable "enable_playbooks" {
-  description = "Enable SOAR playbooks (Logic Apps) for automated response"
+  description = "Enable SOAR playbooks (Logic Apps) for automated response."
   type        = bool
   default     = true
 }
 
 variable "playbook_configs" {
-  description = "Configuration for SOAR playbooks"
+  description = "Configuration for SOAR playbooks."
   type = list(object({
     name             = string
     enable_ai_triage = bool
@@ -174,12 +154,8 @@ variable "playbook_configs" {
   ]
 }
 
-###############################################################################
-# Threat Intelligence
-###############################################################################
-
 variable "watchlist_items" {
-  description = "List of threat intelligence watchlist items"
+  description = "List of threat intelligence watchlist items."
   type = list(object({
     indicator   = string
     type        = string
@@ -194,12 +170,8 @@ variable "watchlist_items" {
   }
 }
 
-###############################################################################
-# Tags
-###############################################################################
-
 variable "tags" {
-  description = "Tags to apply to all resources"
+  description = "Tags to apply to all resources."
   type        = map(string)
   default     = {}
 }
